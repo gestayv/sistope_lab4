@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <unistd.h>
+#include "lista.h"
 
 int main(int argc, char* argv[])
 {
@@ -85,5 +82,21 @@ int main(int argc, char* argv[])
         fprintf(stderr, "No se ingreso el parametro -m.\n");
         return 1;
     }
+
+    listaC *test = createNode(1);
+    listaC *n2  = createNode(2);
+    listaC *n3  = createNode(3);
+    listaC *n4  = createNode(4);
+    listaC *n5  = createNode(5);
+    listaC *n6  = createNode(6);
+    test = addNodeLast(test, n2);
+    test = addNodeLast(test, n3);
+    test = addNodeLast(test, n4);
+    test = addNodeLast(test, n5);
+    test = addNodeFirst(test, n6);
+    showList(test);
+    test = deleteNode(test, 3);
+    showList(test);
+    
     return 0;
 }
