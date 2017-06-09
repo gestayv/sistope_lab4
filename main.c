@@ -93,10 +93,10 @@ int main(int argc, char* argv[])
     test = addNodeLast(test, n3);
     test = addNodeLast(test, n4);
     test = addNodeLast(test, n5);
-    test = addNodeFirst(test, n6);
+    test = addNodeLast(test, n6);
     showList(test);
-    test = deleteNode(test, 3);
+    test = deleteNode(test, 1);
     showList(test);
-    
+
     return 0;
 }

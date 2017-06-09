@@ -1,9 +1,20 @@
 #include "lista.h"
 
+/*  Función createNode:
+        - Se encarga de crear un nuevo nodo para una lista circular al reservar
+        la memoria que le corresponde y asignarle un dato que se le entrega.
+
+    Entrada:
+        - dato: Entero correspondiente al dato del nodo que se crea.
+
+    Salida:
+        - Si no hay problemas al reservar memoria para el nodo, se devuelve un puntero
+        al tipo de dato listaC, lo que corresponde a un nuevo nodo. De lo contrario
+        se devuelve nulo.
+*/
 listaC* createNode(int dato)
 {
     listaC *newNode = malloc(sizeof(listaC));
-    printf("asd\n");
     if(newNode != NULL)
     {
         newNode -> dato = dato;
@@ -14,6 +25,19 @@ listaC* createNode(int dato)
     return NULL;
 }
 
+/*  Función addNodeFirst
+        - Se encarga de insertar un nodo al principio de una lista circular.
+
+    Entrada:
+        - L: Puntero al primer nodo de la lista circular en la que se quiere insertar
+        un nodo.
+
+        - newNode: Nodo que se desea insertar en la lista circular.
+
+    Salida:
+        - Se entrega una nueva lista correspondiente a la lista original modificada
+        con un nuevo nodo como el primer elemento.
+*/
 listaC* addNodeFirst(listaC *L, listaC *newNode)
 {
     //  Si la lista es de un solo nodo.
@@ -42,6 +66,19 @@ listaC* addNodeFirst(listaC *L, listaC *newNode)
     return L;
 }
 
+/*  Funcioń addNodeLast:
+        - Se encarga de añadir un nodo al final de una lista circular.
+
+    Entada:
+        - L: Puntero al primer nodo de la lista circular en la que se quiere insertar
+        un elemento.
+
+        - newNode: Nodo que se desea insertar al final de la lista circular.
+
+    Salida:
+        - Se entrega una nueva lista correspondiente a la lista original modificada
+        con un nuevo nodo como el último elemento.
+*/
 listaC* addNodeLast(listaC *L, listaC *newNode)
 {
     if(L -> prev == L)
@@ -67,11 +104,47 @@ listaC* addNodeLast(listaC *L, listaC *newNode)
     return L;
 }
 
+/*  Función deleteNode:
+        - Se encarga de eliminar un nodo de una lista circular.
+
+    Entrada:
+        - L: Puntero al primer elemento de la lista circular de la cual se desea
+        eliminar un nodo.
+
+        - dato: Corresponde al dato que contiene el nodo que se desea eliminar.
+        Como en este laboratorio los datos son únicos por nodo, no hay conflictos.
+
+    Salida:
+        - Se entrega una nueva lista, correspondiente a la lista original modificada
+        con un nodo menos, correspondiente al que se desea eliminar. Si la lista queda
+        vacía se devuelve NULL.
+*/
 listaC *deleteNode(listaC *L, int dato)
 {
     if(L == NULL)
     {
         return NULL;
+    }
+    else if(L -> dato == dato)
+    {
+        if(L -> prev == L)
+        {
+            free(L);
+            return NULL;
+        }
+        else
+        {
+            listaC *aux = L;
+            listaC *auxPrev = aux -> prev;
+            listaC *auxNext = aux -> next;
+            auxPrev -> next = auxNext;
+            auxNext -> prev = auxPrev;
+            L = aux -> next;
+            aux -> next = NULL;
+            aux -> prev = NULL;
+            free(aux);
+            return L;
+        }
     }
     else
     {
@@ -84,21 +157,15 @@ listaC *deleteNode(listaC *L, int dato)
             }
             aux = aux -> next;
         }while(aux != L);
+
         if(aux -> prev == aux)
         {
-            free(aux);
-            return NULL;
+            printf("El dato que se desea eliminar no esta en la lista.\n");
+            return L;
         }
         else if(aux == L)
         {
-            listaC* auxPrev = aux -> prev;
-            listaC* auxNext = aux -> next;
-            auxPrev -> next = auxNext;
-            auxNext -> prev = auxPrev;
-            L = aux -> next;
-            aux -> next = NULL;
-            aux -> prev = NULL;
-            free(aux);
+            printf("El dato que se desea eliminar no esta en la lista.\n");
             return L;
         }
         else
@@ -115,6 +182,12 @@ listaC *deleteNode(listaC *L, int dato)
     }
 }
 
+/*  Función showList:
+        - Se encarga de mostrar por pantalla los contenidos de la lista circular.
+
+    Entrada:
+        - L: Puntero al primer elemento de la lista circular.
+*/
 void showList(listaC *L)
 {
     if(L == NULL)
