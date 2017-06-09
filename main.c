@@ -1,4 +1,4 @@
-#include "lista.h"
+#include "politicas.h"
 
 int main(int argc, char* argv[])
 {
@@ -16,7 +16,6 @@ int main(int argc, char* argv[])
 		switch(c)
 		{
 			case 'm':
-
                 if(sscanf(optarg, "%d", &marcos) != 1)
                 {
                     fprintf(stderr, "El número de marcos ha sido ingresado de forma erronea.\n");
@@ -40,15 +39,16 @@ int main(int argc, char* argv[])
                 break;
             //	Si getopt detecta un error, devuelve el valor '?'. Por lo que es necesario agregar el caso.
 			case '?':
-				//	Si el error encontrado está en el argumento "-h", se indica que se debe ingresar el número de hijos.
+				//	Si el error encontrado está en el argumento "-m", se indica que se debe ingresar el número de marcos.
                 if(optopt == 'm')
 				{
 					fprintf(stderr, "Se debe indicar el numero de marcos junto al parametro -%c.\n", optopt);
                     fprintf(stderr, "Uso: ./politica -m NUMERO_MARCO -e NOMBRE_ARCHIVO_ENTRADA\n");
 				}
+                //	Si el error encontrado está en el argumento "-m", se indica que se debe ingresar el nombre del archivo de entrada.
                 else if(optopt == 'e')
                 {
-                    fprintf(stderr, "Se debe indicar el archivo de entrada junto al parametro -%c.\n", optopt);
+                    fprintf(stderr, "Se debe indicar el nombre del archivo de entrada junto al parametro -%c.\n", optopt);
                     fprintf(stderr, "Uso: ./politica -m NUMERO_MARCO -e NOMBRE_ARCHIVO_ENTRADA\n");
                 }
 				//	Si el argumento en el que se encontró el error se puede imprimir,
@@ -82,21 +82,6 @@ int main(int argc, char* argv[])
         fprintf(stderr, "No se ingreso el parametro -m.\n");
         return 1;
     }
-
-    listaC *test = createNode(1);
-    listaC *n2  = createNode(2);
-    listaC *n3  = createNode(3);
-    listaC *n4  = createNode(4);
-    listaC *n5  = createNode(5);
-    listaC *n6  = createNode(6);
-    test = addNodeLast(test, n2);
-    test = addNodeLast(test, n3);
-    test = addNodeLast(test, n4);
-    test = addNodeLast(test, n5);
-    test = addNodeLast(test, n6);
-    showList(test);
-    test = deleteNode(test, 1);
-    showList(test);
-
+    
     return 0;
 }

@@ -192,7 +192,7 @@ void showList(listaC *L)
 {
     if(L == NULL)
     {
-        printf("Lista vacia");
+        printf("Lista vacia\n");
     }
     else
     {
