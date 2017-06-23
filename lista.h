@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <math.h>
 
 //  Estructura utilizada para representar un marco en memoria
 typedef struct listaC
