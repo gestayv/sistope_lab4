@@ -287,22 +287,30 @@ void algFifo(int *pages, int size, FILE *io_out)
     //  Luego, se comienzan a insertar las páginas en los marcos.
     for (i = 0; i < size; i++)
     {
+        //  Mientras hayan marcos vacíos (nodos con valor -1) se insertan páginas directamente
         if(aux -> dato == -1)
         {
             aux -> dato = pages[i];
             aux = aux -> next;
             writeList(marcosAlg, io_out);
         }
+        //  De lo contrario:
         else
         {
+            //  Se busca el dato en la lista
             ref = searchNode(marcosAlg, pages[i]);
+            //  Si el dato está en la lista
             if(ref != NULL)
             {
+                //  Se suma 1 a la cantidad de hits
                 numHit++;
                 writeList(marcosAlg, io_out);
             }
+            //  Si no está en la lista
             else
             {
+                //  Se inserta el dato y se mueve el puntero que indica el primer
+                //  dato al siguiente nodo.
                 primero -> dato = pages[i];
                 primero = primero -> next;
                 writeList(marcosAlg, io_out);
