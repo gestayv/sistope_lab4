@@ -278,6 +278,7 @@ void algFifo(int *pages, int size, FILE *io_out)
 */
 void algLRU(int *pages, int size, FILE *io_out)
 {
+    int numHit = 0;
     fprintf(io_out, "Algoritmo LRU\n");
     int i = marcosGlobales;
     listaC *marcosAlg = NULL;
@@ -290,11 +291,52 @@ void algLRU(int *pages, int size, FILE *io_out)
         i--;
     }
     //  Luego, se comienzan a insertar las páginas en los marcos.
-    int page = 0;
-    for (page = 0; page < size; page++)
+    int cont = marcosGlobales;
+    listaC* aux = marcosAlg;
+    listaC* ref = NULL;
+    listaC* viejo = NULL;
+    for (i = 0; i < size; i++)
     {
+        //Si el marco esta vacio
+        if(aux -> dato == -1){
+            aux -> dato = pages[i];
+            aux -> tiempo = cont;
+            aux = aux -> next;
+            cont--;
+            writeList(marcosAlg,io_out);
+        }
+        //Si todos los marcos estan llenos
+        else{
+            //Busco si la pagina seleccionada esta en la lista de marcos.
+            ref = searchNode(marcosAlg,pages[i]);
+            //Si es asi (HIT)
+            if(ref != NULL){
+                //Sumo el hit
+                numHit++;
+                //Actualizo los tiempos.
+                ref -> tiempo = 0;
+                updateTime(marcosAlg);
+                writeList(marcosAlg,io_out);
+            }
+            //Si no es asi (MISS). Reemplazo.
+            else{
+                //Encuentro el nodo antes referenciado
+                viejo = findOldNode(marcosAlg);
+                viejo -> dato = pages[i];
+                viejo -> tiempo = 0;
+                updateTime(marcosAlg);
+                writeList(marcosAlg,io_out);
+            }
+        }
 
     }
+
+    
+    float hitRate = numHit/(float)size * 100.0;
+    missOptimo = 100.0 - hitRate;
+    fprintf(io_out, "tasa miss: %.2f%% \n", missOptimo);
+    fprintf(io_out, "tasa hit: %.2f%% \n", hitRate);
+
 }
 
 /*  Función algClock
