@@ -1,2 +1,2 @@
-politica: main.c lista.c lista.h
-	gcc main.c lista.c -o politica -I.
+politica: main.c lista.c politicas.c lista.h politicas.h
+	gcc main.c lista.c politicas.c -o politica -I.

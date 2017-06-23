@@ -81,7 +81,11 @@ listaC* addNodeFirst(listaC *L, listaC *newNode)
 */
 listaC* addNodeLast(listaC *L, listaC *newNode)
 {
-    if(L -> prev == L)
+    if(L == NULL)
+    {
+        L = newNode;
+    }
+    else if(L -> prev == L)
     {
         //  El anterior y el siguiente del nuevo son el primero.
         newNode -> next = L;
@@ -182,26 +186,91 @@ listaC *deleteNode(listaC *L, int dato)
     }
 }
 
-/*  Función showList:
-        - Se encarga de mostrar por pantalla los contenidos de la lista circular.
-
+/*  Función showList
+        - Se encarga de mostrar una lista circular por terminal/consola.
     Entrada:
         - L: Puntero al primer elemento de la lista circular.
 */
 void showList(listaC *L)
 {
-    if(L == NULL)
+    listaC *aux = L;
+    if(aux == NULL)
     {
-        printf("Lista vacia\n");
+        printf("Lista vacia.\n");
     }
     else
+    {
+        do
+        {
+            printf("|d: %d (%d) |", aux -> dato, aux -> tiempo);
+            aux = aux -> next;
+        } while(aux != L);
+        printf("\n");
+    }
+}
+
+/*  Función writeList:
+        - Se encarga de escribir en un archivo los contenidos de la lista circular.
+
+    Entrada:
+        - L: Puntero al primer elemento de la lista circular.
+        - io_out: Puntero al archivo en el que se escriben los datos.
+*/
+void writeList(listaC *L, FILE *io_out)
+{
+    if(L != NULL)
     {
         listaC *aux = L;
         do
         {
-            printf("%d ", aux->dato);
-            aux = aux -> next;
+            if(aux == L -> prev)
+            {
+                if(aux -> dato != -1)
+                {
+                    fprintf(io_out, "%d", aux->dato);
+                    aux = aux -> next;
+                }
+                else
+                {
+                    aux = aux -> next;
+                }
+            }
+            else
+            {
+                if(aux -> dato != -1)
+                {
+                    fprintf(io_out, "%d - ", aux->dato);
+                    aux = aux -> next;
+                }
+                else
+                {
+                    fprintf(io_out, " - ");
+                    aux = aux -> next;
+                }
+            }
         }while(aux != L);
-        printf("\n");
+        fprintf(io_out, "\n");
     }
+}
+
+/*  Función searchNode:
+        - Se encarga de buscar un nodo en una lista a partir de un dato determinado.
+    Entrada:
+        - L: Puntero al primer nodo de la lista en la que se busca.
+        - dato: Dato utilizado para encontrar el nodo.
+    Salida:
+        - Puntero a un nodo de la lista, si se encuentra, se devuelve un puntero
+        al nodo que tiene el dato, en el caso contrario se devuelve nulo.
+*/
+listaC* searchNode(listaC *L, int dato)
+{
+    listaC *aux = L;
+    do {
+        if(aux -> dato == dato)
+        {
+            return aux;
+        }
+        aux = aux -> next;
+    } while(aux != L);
+    return NULL;
 }
