@@ -23,5 +23,7 @@ listaC *deleteNode(listaC *L, int dato);
 listaC* searchNode(listaC *L, int dato);
 void writeList(listaC *L, FILE *io_out);
 void showList(listaC *L);
+listaC* findOldNode(listaC* L);
+void updateTime(listaC* L);
 
 #endif
