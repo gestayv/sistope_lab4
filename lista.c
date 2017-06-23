@@ -20,6 +20,8 @@ listaC* createNode(int dato)
         newNode -> dato = dato;
         newNode -> next = newNode;
         newNode -> prev = newNode;
+        newNode -> tiempo = 0;
+        newNode -> bitClock = 0;
         return newNode;
     }
     return NULL;
@@ -209,6 +211,8 @@ void showList(listaC *L)
     }
 }
 
+
+
 /*  Función writeList:
         - Se encarga de escribir en un archivo los contenidos de la lista circular.
 
@@ -273,4 +277,44 @@ listaC* searchNode(listaC *L, int dato)
         aux = aux -> next;
     } while(aux != L);
     return NULL;
+}
+
+/*  Función findOldNode:
+        - Retorna el nodo que lleva mayor tiempo en la lista de marcos
+        - Función utilizada en el algoritmo LRU.
+    Entrada:  
+        - L: Puntero al primer nodo de la lista de marcos (lista donde se guardan las referencias)
+    Salida:
+        - Puntero al nodo con el mayor tiempo.
+*/
+listaC* findOldNode(listaC* L){
+    listaC* aux = L -> next;
+    listaC* viejo = L;
+    int mayor = L -> tiempo;
+    while(aux != L){
+        if(aux->tiempo > mayor){
+            mayor = aux -> tiempo;
+            viejo = aux;
+        }
+        aux = aux -> next;
+    }
+    return viejo;
+}
+
+/*  Función updateTime:
+        - Actualiza el tiempo de los nodos de la lista de marcos, sumandole uno al tiempo de cada nodo.
+        - Función utilizada en el algoritmo LRU.
+    Entrada:  
+        - L: Puntero al primer nodo de la lista de marcos (lista donde se guardan las referencias).
+    Salida:
+        - La misma lista con los tiempos actualizados.
+*/
+void updateTime(listaC* L){
+    listaC* aux = L;
+    aux -> tiempo = aux -> tiempo + 1;
+    aux = aux -> next;
+    while(aux != L){
+        aux -> tiempo = aux -> tiempo + 1;
+        aux = aux -> next;
+    }
 }
