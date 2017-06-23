@@ -1,5 +1,14 @@
 #include "politicas.h"
 
+/*  Función algoritmos:
+        - Se encarga de parsear un archivo csv, ingresar sus contenidos en un
+        arreglo y luego llamar a todos los algoritmos de reemplazo.
+    Entrada:
+        - io_in: Puntero a un archivo csv del cual se obtiene el conjunto de
+        páginas con el que se trabajará.
+        - io_out: Puntero a un archivo de salida en el cual se escriben los resultados
+        obtenidos de cada algoritmo de reemplazo.
+*/
 void algoritmos(FILE* io_in, FILE* io_out)
 {
     //  Se crea un buffer para guardar cada número de página
@@ -99,8 +108,8 @@ void algoritmos(FILE* io_in, FILE* io_out)
         //  Luego se llama a cada uno de los algoritmos de reemplazo
 
         algOptimo(paginas, counter, io_out);
-        /*
         algFifo(paginas, counter, io_out);
+        /*
         algLRU(paginas, counter, io_out);
         algClock(paginas, counter, io_out);
         */
@@ -125,7 +134,7 @@ void algOptimo(int *pages, int size, FILE *io_out)
     int referencia = 0, tiempo = 0;
     listaC *marcosAlg = NULL;
     int numHit = 0;
-    //  Primero creo el número de marcos, representados por nodos de una lista
+    //  Primero se usa el número de marcos, para crear los nodos de una lista
     //  doblemente enlazada.
     while(i < marcosGlobales)
     {
@@ -133,69 +142,83 @@ void algOptimo(int *pages, int size, FILE *io_out)
         marcosAlg = addNodeLast(marcosAlg, newM);
         i++;
     }
-    //  Luego, se comienzan a insertar las páginas en los marcos.
 
+    //  Luego, se comienzan a insertar las páginas en los marcos.
     int page = 0;
     listaC* aux = marcosAlg;
     listaC* aux2 = marcosAlg;
 
-    //  Se comienza a recorrer el arreglo con las páginas entregadas en el csv
+    //  Se recorre el arreglo con las páginas entregadas en el csv
     for (page = 0; page < size; page++)
     {
-        //  Si aún no se llenan todos los marcos con páginas, se ingresa una página en
-        //  un marco vacío.
+        //  Si el número de páginas ingresadas es menor al número de marcos.
         if(page < marcosGlobales)
         {
+            //  Se busca el dato en la lista.
             aux = searchNode(marcosAlg, pages[page]);
+            //  Si se encuentra se suma 1 al número de hits y se actualiza la
+            //  última vez que se hizo referencia a la página.
             if(aux != NULL)
             {
                 numHit++;
                 aux -> tiempo = page;
             }
+            //  Si no se encuentra el dato
             else
             {
+                //  Se comienza a recorrer la lista, mientras el dato actual
+                //  sea -1 se pasa al nodo siguiente.
                 aux = marcosAlg;
                 while(aux -> dato != -1)
                 {
                     aux = aux -> next;
                 }
+                //  Se inserta el dato y se actualiza la última vez que se hizo
+                //  referencia a la página
                 aux -> dato = pages[page];
                 aux -> tiempo = page;
             }
             writeList(marcosAlg, io_out);
-            showList(marcosAlg);
         }
-        //  En el caso contrario, se debe buscar el dato en los marcos
+        //  Si todos los marcos están ocupados
         else
         {
-            //  Si se encuentra, el número de hits aumenta en 1.
-
+            //  Se busca el dato (página) a ser ingresado.
             aux = searchNode(marcosAlg, pages[page]);
+            //  Si se encuentra se suma 1 al número de hits y se actualiza la
+            //  última referencia.
             if(aux != NULL)
             {
                 numHit++;
                 aux -> tiempo = page;
             }
-            //  En caso contrario, se debe ver cuál de las páginas cargadas en
-            //  memoria (marcos), será referenciada en un mayor tiempo.
+            //  Si no se encuentra, se debe buscar la página en los marcos
+            //  cuya siguiente referencia ocurra en el mayor intervalo de tiempo.
             else
             {
+                //  Se recorre la lista de marcos.
                 aux = marcosAlg;
                 do
                 {
+                    //  Por cada marco se recorre la lista de paginas.
                     for(i = page; i < size; i++)
                     {
+                        //  Si se encuentra una referencia se indica en una variable
                         if(aux->dato == pages[i])
                         {
                             referencia = 1;
+                            //  Si el tiempo a la referencia, es mayor al existente
+                            //  se referencia el marco como el que debe ser reemplazado.
                             if(i-page > tiempo)
                             {
                                 aux2 = aux;
                                 tiempo = i - page;
-                                break;
                             }
+                            break;
                         }
                     }
+                    //  Si no se encontró una referencia al dato este queda como
+                    //  candidato al reemplazo
                     if(referencia == 0)
                     {
                         if(tiempo == 0)
@@ -219,20 +242,20 @@ void algOptimo(int *pages, int size, FILE *io_out)
                     referencia = 0;
                     aux = aux -> next;
                 }while(aux != marcosAlg);
+                //  Una vez que se termina de recorrer el arreglo de páginas
+                //  se actualiza el marco indicado por aux2.
                 aux2 -> dato = pages[page];
                 aux2 -> tiempo = page;
                 tiempo = 0;
             }
             writeList(marcosAlg, io_out);
-            showList(marcosAlg);
         }
     }
-
+    //  Se calculan los hit y miss rate.
     float hitRate = numHit/(float)size * 100.0;
     missOptimo = 100.0 - hitRate;
     fprintf(io_out, "tasa miss: %.2f%% \n", missOptimo);
     fprintf(io_out, "tasa hit: %.2f%% \n", hitRate);
-
 }
 
 /*  Función algFifo
@@ -247,9 +270,10 @@ void algOptimo(int *pages, int size, FILE *io_out)
 */
 void algFifo(int *pages, int size, FILE *io_out)
 {
-    fprintf(io_out, "Algoritmo FIFO\n");
+    fprintf(io_out, "\nAlgoritmo FIFO\n");
     int i = marcosGlobales;
     listaC *marcosAlg = NULL;
+    int numHit = 0;
     //  Primero creo el número de marcos, representados por nodos de una lista
     //  doblemente enlazada.
     while(i != 0)
@@ -258,12 +282,38 @@ void algFifo(int *pages, int size, FILE *io_out)
         marcosAlg = addNodeLast(marcosAlg, newM);
         i--;
     }
+    listaC *aux = marcosAlg, *primero = marcosAlg;
+    listaC *ref = NULL;
     //  Luego, se comienzan a insertar las páginas en los marcos.
-    int page = 0;
-    for (page = 0; page < size; page++)
+    for (i = 0; i < size; i++)
     {
-
+        if(aux -> dato == -1)
+        {
+            aux -> dato = pages[i];
+            aux = aux -> next;
+            writeList(marcosAlg, io_out);
+        }
+        else
+        {
+            ref = searchNode(marcosAlg, pages[i]);
+            if(ref != NULL)
+            {
+                numHit++;
+                writeList(marcosAlg, io_out);
+            }
+            else
+            {
+                primero -> dato = pages[i];
+                primero = primero -> next;
+                writeList(marcosAlg, io_out);
+            }
+        }
     }
+    //  Se calculan los hit y miss rate.
+    float hitRate = numHit/(float)size * 100.0;
+    missOptimo = 100.0 - hitRate;
+    fprintf(io_out, "tasa miss: %.2f%% \n", missOptimo);
+    fprintf(io_out, "tasa hit: %.2f%% \n", hitRate);
 }
 
 /*  Función algLRU
