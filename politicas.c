@@ -291,9 +291,16 @@ void algFifo(int *pages, int size, FILE *io_out)
         //  Mientras hayan marcos vacíos (nodos con valor -1) se insertan páginas directamente
         if(aux -> dato == -1)
         {
-            aux -> dato = pages[i];
-            aux = aux -> next;
-            writeList(marcosAlg, io_out);
+            ref = searchNode(marcosAlg, pages[i]);
+            if(ref != NULL){
+                numHit++;
+                writeList(marcosAlg, io_out);
+            }
+            else{
+                aux -> dato = pages[i];
+                aux = aux -> next;
+                writeList(marcosAlg, io_out);    
+            }
         }
         //  De lo contrario:
         else
@@ -362,11 +369,20 @@ void algLRU(int *pages, int size, FILE *io_out)
     {
         //Si el marco esta vacio
         if(aux -> dato == -1){
-            aux -> dato = pages[i];
-            aux -> tiempo = cont;
-            aux = aux -> next;
-            cont--;
-            writeList(marcosAlg,io_out);
+            ref = searchNode(marcosAlg,pages[i]);
+            if(ref != NULL){
+                numHit++;
+                ref -> tiempo = 0;
+                updateTime(marcosAlg);
+                writeList(marcosAlg,io_out);
+            }
+            else{
+                aux -> dato = pages[i];
+                aux -> tiempo = cont;
+                aux = aux -> next;
+                cont--;
+                writeList(marcosAlg,io_out);
+            }
         }
         //Si todos los marcos estan llenos
         else{
@@ -435,10 +451,18 @@ void algClock(int *pages, int size, FILE *io_out)
     {
         if(aux -> dato == -1)
         {
-            aux -> dato = pages[i];
-            aux -> bitClock = 1;
-            aux = aux -> next;
-            writeList(marcosAlg,io_out);
+            ref = searchNode(marcosAlg, pages[i]);
+            if(ref != NULL){
+                ref -> bitClock = 1;
+                numHit++;
+                writeList(marcosAlg,io_out);
+            }
+            else{
+                aux -> dato = pages[i];
+                aux -> bitClock = 1;
+                aux = aux -> next;
+                writeList(marcosAlg,io_out);
+            }
         }
         else
         {
