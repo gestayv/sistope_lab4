@@ -110,9 +110,8 @@ void algoritmos(FILE* io_in, FILE* io_out)
         algOptimo(paginas, counter, io_out);
         algFifo(paginas, counter, io_out);
         algLRU(paginas, counter, io_out);
-        
-        //algClock(paginas, counter, io_out);
-        
+        algClock(paginas, counter, io_out);
+
     }
 }
 
@@ -392,7 +391,7 @@ void algLRU(int *pages, int size, FILE *io_out)
 
     }
 
-    
+
     float hitRate = numHit/(float)size * 100.0;
     float missLRU = 100.0 - hitRate;
     fprintf(io_out, "tasa miss: %.2f%% \n", missLRU);
@@ -414,7 +413,7 @@ void algLRU(int *pages, int size, FILE *io_out)
 */
 void algClock(int *pages, int size, FILE *io_out)
 {
-    fprintf(io_out, "Algoritmo RELOJ\n");
+    fprintf(io_out, "\nAlgoritmo RELOJ\n");
     int i = marcosGlobales;
     listaC *marcosAlg = NULL;
     //  Primero creo el número de marcos, representados por nodos de una lista
@@ -425,10 +424,53 @@ void algClock(int *pages, int size, FILE *io_out)
         marcosAlg = addNodeLast(marcosAlg, newM);
         i--;
     }
-    //  Luego, se comienzan a insertar las páginas en los marcos.
-    int page = 0;
-    for (page = 0; page < size; page++)
+    //  Luego, se comienzan a insertar las páginas en los marcos
+    listaC *aux = marcosAlg, *ref = NULL;
+    int rem = 0, numHit = 0;
+    for (i = 0; i < size; i++)
     {
-
+        if(aux -> dato == -1)
+        {
+            aux -> dato = pages[i];
+            aux -> bitClock = 1;
+            aux = aux -> next;
+            writeList(marcosAlg,io_out);
+        }
+        else
+        {
+            ref = searchNode(marcosAlg, pages[i]);
+            if(ref != NULL)
+            {
+                ref -> bitClock = 1;
+                numHit++;
+                writeList(marcosAlg,io_out);
+            }
+            else
+            {
+                rem = 0;
+                while(rem == 0)
+                {
+                    if(aux -> bitClock == 1)
+                    {
+                        aux -> bitClock = 0;
+                        aux = aux -> next;
+                    }
+                    else
+                    {
+                        aux -> dato = pages[i];
+                        aux -> bitClock = 1;
+                        aux = aux -> next;
+                        rem = 1;
+                        writeList(marcosAlg,io_out);
+                    }
+                }
+            }
+        }
     }
+    float hitRate = numHit/(float)size * 100.0;
+    float missClock = 100.0 - hitRate;
+    fprintf(io_out, "tasa miss: %.2f%% \n", missClock);
+    fprintf(io_out, "tasa hit: %.2f%% \n", hitRate);
+    float comparacion = fabs(missOptimo - (100 - hitRate));
+    fprintf(io_out, "%.2f%% peor que algoritmo optimo \n", comparacion);
 }
