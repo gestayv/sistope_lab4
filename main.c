@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
                 if(marcos <= 0)
                 {
                     fprintf(stderr, "El número de marcos debe ser mayor a cero.\n");
+                    return 1;
                 }
                 mflag = 1;
 				break;
@@ -117,14 +118,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    /*
+    
     io_out = fopen(salida, "r");
     if(io_out != NULL)
     {
         fprintf(stderr, "El archivo de salida ya existe.\n");
         return 1;
     }
-    */
+    
     io_out = fopen(salida, "w");
 
     marcosGlobales = marcos;
