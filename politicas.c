@@ -449,14 +449,17 @@ void algClock(int *pages, int size, FILE *io_out)
     int rem = 0, numHit = 0;
     for (i = 0; i < size; i++)
     {
+        //Si los marcos estan vacios.
         if(aux -> dato == -1)
         {
+            //Revisamos si hacemos hit, actualizamos el bit de uso y aumentamos el numero de miss.
             ref = searchNode(marcosAlg, pages[i]);
             if(ref != NULL){
                 ref -> bitClock = 1;
                 numHit++;
                 writeList(marcosAlg,io_out);
             }
+            //Si no, hacemos miss.
             else{
                 aux -> dato = pages[i];
                 aux -> bitClock = 1;
@@ -464,25 +467,34 @@ void algClock(int *pages, int size, FILE *io_out)
                 writeList(marcosAlg,io_out);
             }
         }
+        //Si los marcos estan llenos...
         else
         {
+            //... revisamos si se hace un hit.
             ref = searchNode(marcosAlg, pages[i]);
+            //De ser asi, actualizamos el bit de uso y sumamos un hit
             if(ref != NULL)
             {
+                
                 ref -> bitClock = 1;
                 numHit++;
                 writeList(marcosAlg,io_out);
             }
+            //Si no...
             else
             {
+
                 rem = 0;
+                //Buscamos una posicion libre (con el puntero aux), hasta que reemplazemos el valor.
                 while(rem == 0)
                 {
+                    //Si el bit de uso donde se ubica el puntero es 1, lo cambiamos a 0 y movemos el cursor
                     if(aux -> bitClock == 1)
                     {
                         aux -> bitClock = 0;
                         aux = aux -> next;
                     }
+                    //De lo contrario, reemplazamos el dato, ponemos el bit de uso en uno y movemos el cursor
                     else
                     {
                         aux -> dato = pages[i];
