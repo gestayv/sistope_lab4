@@ -118,9 +118,10 @@ void algoritmos(FILE* io_in, FILE* io_out)
 /*  Función algOptimo:
         - Aplica el algoritmo de reemplazo óptimo sobre el conjunto de págs recibido.
     Entrada:
-        - pages:
-        - size:
-        - io_out:
+        - pages:  arreglo de enteros, donde cada uno representa una página.
+        - size:   tamaño del arreglo "pages".
+        - io_out: puntero a un archivo en el que se escribe un seguimiento al algoritmo
+        de reemplazo y su rendimiento.
     Salida:
         - Escribe en un archivo de texto un seguimiento al reemplazo de páginas
         y la tasa de miss y hit del algoritmo.
@@ -260,9 +261,10 @@ void algOptimo(int *pages, int size, FILE *io_out)
 /*  Función algFifo
         - Aplica el algoritmo de reemplazo FIFO al conjunto de págs recibidos.
     Entrada:
-        - pages:
-        - size:
-        - io_out:
+        - pages:  arreglo de enteros, donde cada uno representa una página.
+        - size:   tamaño del arreglo "pages".
+        - io_out: puntero a un archivo en el que se escribe un seguimiento al algoritmo
+        de reemplazo y su rendimiento.
     Salida:
         - Escribe en un archivo de texto un seguimiento al reemplazo de páginas
         y la tasa de miss y hit del algoritmo.
@@ -329,9 +331,10 @@ void algFifo(int *pages, int size, FILE *io_out)
 /*  Función algLRU
         - Aplica el algoritmo de reemplazo LRU al conjunto de págs recibidas.
     Entrada:
-        - pages:
-        - size:
-        - io_out:
+        - pages:  arreglo de enteros, donde cada uno representa una página.
+        - size:   tamaño del arreglo "pages".
+        - io_out: puntero a un archivo en el que se escribe un seguimiento al algoritmo
+        de reemplazo y su rendimiento.
     Salida:
         - Escribe en un archivo de texto un seguimiento al reemplazo de páginas
         y la tasa de miss y hit del algoritmo.
@@ -404,9 +407,10 @@ void algLRU(int *pages, int size, FILE *io_out)
 /*  Función algClock
         - Aplica el algoritmo de reemplazo del reloj al conjunto de págs recibidas.
     Entrada:
-        - pages:
-        - size:
-        - io_out:
+        - pages:  arreglo de enteros, donde cada uno representa una página.
+        - size:   tamaño del arreglo "pages".
+        - io_out: puntero a un archivo en el que se escribe un seguimiento al algoritmo
+        de reemplazo y su rendimiento.
     Salida:
         - Escribe en un archivo de texto un seguimiento al reemplazo de páginas
         y la tasa de miss y hit del algoritmo.
